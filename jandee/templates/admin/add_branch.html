@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Branch</title>
+</head>
+<body>
+    <h1>Add New Branch</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <div>
+            <label for="id_name">Branch Name</label>
+            {{ form.name }}
+        </div>
+
+        <button type="submit">Add Branch</button>
+    </form>
+</body>
+</html>
