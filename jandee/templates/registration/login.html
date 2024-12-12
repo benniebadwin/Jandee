@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Login</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Log in</button>
+  </form>
+
+  {% if next %}
+    <p><a href="{{ next }}">You were redirected here because you were trying to access a restricted page. Click to continue.</a></p>
+  {% endif %}
+{% endblock %}

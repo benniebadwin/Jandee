@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Report</title>
+    <style>
+        /* Basic Modal Styles */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1; 
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4); 
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Submit Monthly Report</h1>
+    <form method="post" enctype="multipart/form-data" id="reportForm">
+        {% csrf_token %}
+        <div>
+            <label for="id_branch">Branch</label>
+            {{ form.branch }}
+        </div>
+        <div>
+            <label for="id_month">Month</label>
+            {{ form.month }}
+        </div>
+        <div>
+            <label for="id_year">Year</label>
+            {{ form.year }}
+        </div>
+        <div>
+            <label for="id_cash_sales">Cash Sales</label>
+            {{ form.cash_sales }}
+        </div>
+        <div>
+            <label for="id_mpesa_sales">Mpesa Sales</label>
+            {{ form.mpesa_sales }}
+        </div>
+        <div>
+            <label for="id_branch_expense">Branch Expense</label>
+            {{ form.branch_expense }}
+        </div>
+        <div>
+            <label for="id_salary">Salary</label>
+            {{ form.salary }}
+        </div>
+        <div>
+            <label for="id_reliever_salary">Reliever Salary</label>
+            {{ form.reliever_salary }}
+        </div>
+        <div>
+            <label for="id_airtime">Airtime</label>
+            {{ form.airtime }}
+        </div>
+        <div>
+            <label for="id_other_expense_reason">Other Expense Reason</label>
+            {{ form.other_expense_reason }}
+        </div>
+        <div>
+            <label for="id_other_expense_amount">Other Expense Amount</label>
+            {{ form.other_expense_amount }}
+        </div>
+        <div>
+            <label for="id_bankslip_proof">Bankslip Proof</label>
+            {{ form.bankslip_proof }}
+        </div>
+        <div>
+            <label for="id_mpesa_transaction_message">Mpesa Transaction Message</label>
+            {{ form.mpesa_transaction_message }}
+        </div>
+
+        <button type="button" id="submitButton">Submit Report</button>
+    </form>
+
+    <!-- Modal -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Confirm Submission</h2>
+            <p>Are you sure you want to submit this report with the total banking of <span id="totalBankingAmount"></span>?</p>
+            <button id="confirmSubmit">Yes, Submit</button>
+            <button id="cancelSubmit">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        // Calculate total banking
+        function calculateTotalBanking() {
+            const cashSales = parseFloat(document.getElementById("id_cash_sales").value) || 0;
+            const branchExpense = parseFloat(document.getElementById("id_branch_expense").value) || 0;
+            const salary = parseFloat(document.getElementById("id_salary").value) || 0;
+            const relieverSalary = parseFloat(document.getElementById("id_reliever_salary").value) || 0;
+            const airtime = parseFloat(document.getElementById("id_airtime").value) || 0;
+            const otherExpense = parseFloat(document.getElementById("id_other_expense_amount").value) || 0;
+
+            // Calculate total banking as cash_sales - branch_expense - other_expenses - salary - reliever_salary - airtime
+            return cashSales - branchExpense - otherExpense - salary - relieverSalary - airtime;
+        }
+
+        // Show modal on button click
+        const submitButton = document.getElementById("submitButton");
+        const modal = document.getElementById("confirmModal");
+        const closeButton = document.getElementsByClassName("close")[0];
+        const confirmSubmitButton = document.getElementById("confirmSubmit");
+        const cancelSubmitButton = document.getElementById("cancelSubmit");
+        const totalBankingElement = document.getElementById("totalBankingAmount");
+
+        submitButton.addEventListener("click", function(event) {
+            // Prevent the form from being submitted immediately
+            event.preventDefault();
+
+            // Calculate and display the total banking amount
+            const totalBanking = calculateTotalBanking();
+            totalBankingElement.textContent = totalBanking.toFixed(2); // Format to two decimals
+
+            // Show the modal
+            modal.style.display = "block"; 
+        });
+
+        // Close the modal
+        closeButton.addEventListener("click", function() {
+            modal.style.display = "none";
+        });
+
+        cancelSubmitButton.addEventListener("click", function() {
+            modal.style.display = "none"; // Close modal on cancel
+        });
+
+        // Handle form submission after confirmation
+        confirmSubmitButton.addEventListener("click", function() {
+            // Now submit the form after confirmation
+            document.getElementById("reportForm").submit(); // Submit the form
+        });
+
+        // Close modal if the user clicks anywhere outside of the modal
+        window.onclick = function(event) {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
